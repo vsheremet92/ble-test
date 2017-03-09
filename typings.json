@@ -1,0 +1,8 @@
+{
+  "name": "ble",
+  "dependencies": {
+    "express": "registry:dt/express#4.0.0+20170118060322",
+    "highcharts": "registry:dt/highcharts#4.2.7+20170202005436",
+    "mysql": "registry:dt/mysql#0.0.0+20170113202751"
+  }
+}

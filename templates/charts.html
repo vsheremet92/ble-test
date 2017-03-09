@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Title</title>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+
+<body>
+    <div id="container" style="min-width: 310px; height: 500px; margin: 0 auto"></div>
+
+    <div id="container2" style="min-width: 310px; height: 500px; margin: 0 auto"></div>
+
+    <script>
+        var socket = io.connect('http://192.168.1.196:3000');
+        socket.on('message', function(message) {
+            console.log(message);
+            var arrToChart = [];
+
+            for (var i = 0; i < message.length; i++) {
+                arrToChart.push([
+                    Date.UTC(message[i].time.slice(0,4), String(Number(message[i].time.slice(6,7))-1), message[i].time.slice(9,10), message[i].time.slice(12,13), message[i].time.slice(14,16), message[i].time.slice(17,19), message[i].time.slice(20,23)),
+                    message[i].rssi,
+                ])
+            }
+
+            $(function() {
+
+                Highcharts.chart('container', {
+                    chart: {
+                        zoomType: 'x'
+                    },
+                    title: {
+                        text: 'ID107'
+                    },
+                    xAxis: {
+                        type: 'datetime'
+                    },
+                    yAxis: {
+                        max: -40,
+                        min: -100,
+                        title: {
+                            text: 'Scan Data'
+                        }
+                    },
+                    legend: {
+                        enabled: false
+                    },
+                    plotOptions: {
+                        area: {
+                            fillColor: {
+                                linearGradient: {
+                                    x1: 0,
+                                    y1: 0,
+                                    x2: 0,
+                                    y2: 1
+                                },
+                                stops: [
+                                    //[0, Highcharts.getOptions().colors[0]],
+                                    //[1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                                ]
+                            },
+                            marker: {
+                                radius: 2
+                            },
+                            lineWidth: 1,
+                            states: {
+                                hover: {
+                                    lineWidth: 1
+                                }
+                            },
+                            threshold: null
+                        }
+                    },
+                    series: [{
+                        type: 'area',
+                        name: 'RSSI',
+                        data: arrToChart
+                    }]
+                });
+            });
+        });
+
+        socket.on('message2', function(message) {
+
+            var arrToChart2 = [];
+
+            for (var i = 0; i < message.length; i++) {
+                //console.log(message[i].time.slice(12,13), message[i].time.slice(14,16), message[i].time.slice(17,19), message[i].time.slice(20,23), message[i].rssi);
+                arrToChart2.push([
+                    Date.UTC(message[i].time.slice(0,4), String(Number(message[i].time.slice(6,7))-1), message[i].time.slice(9,10), message[i].time.slice(12,13), message[i].time.slice(14,16), message[i].time.slice(17,19), message[i].time.slice(20,23)),
+                    message[i].rssiFiltered,
+                ])
+            }
+
+            $(function() {
+
+                Highcharts.chart('container2', {
+                    chart: {
+                        zoomType: 'x'
+                    },
+                    title: {
+                        text: 'ID107(Filtered)'
+                    },
+                    xAxis: {
+                        type: 'datetime'
+                    },
+                    yAxis: {
+                        max: -40,
+                        min: -100,
+                        title: {
+                            text: 'Scan Data'
+                        }
+                    },
+                    legend: {
+                        enabled: false
+                    },
+                    plotOptions: {
+                        area: {
+                            fillColor: {
+                                linearGradient: {
+                                    x1: 0,
+                                    y1: 0,
+                                    x2: 0,
+                                    y2: 1
+                                },
+                                stops: [
+                                    //[0, Highcharts.getOptions().colors[0]],
+                                    //[1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                                ]
+                            },
+                            marker: {
+                                radius: 2
+                            },
+                            lineWidth: 1,
+                            states: {
+                                hover: {
+                                    lineWidth: 1
+                                }
+                            },
+                            threshold: null
+                        }
+                    },
+                    series: [{
+                        type: 'area',
+                        name: 'RSSI',
+                        data: arrToChart2
+                    }]
+                });
+            });
+        });
+    </script>
+
+</body>
